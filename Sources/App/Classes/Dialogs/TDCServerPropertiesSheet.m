@@ -2291,6 +2291,8 @@ TEXTUAL_IGNORE_DEPRECATION_END
 	NSUInteger draggedRowIndex = draggedRowIndexes.firstIndex;
 
 	if (tableView == self.channelListTable) {
+		[self.channelListArrayController setSortDescriptors:nil];
+
 		[self clearChannelListPredicate];
 
 		[self.channelListArrayController moveObjectAtArrangedObjectIndex:draggedRowIndex toIndex:row];
@@ -2303,6 +2305,14 @@ TEXTUAL_IGNORE_DEPRECATION_END
 	}
 
 	return YES;
+}
+
+- (void)tableView:(NSTableView *)tableView mouseDownInHeaderOfTableColumn:(NSTableColumn *)tableColumn {
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES comparator:^NSComparisonResult(IRCChannelConfig *cfg1, IRCChannelConfig *cfg2) {
+		return [cfg1.channelName caseInsensitiveCompare:cfg2.channelName];
+	}];
+	[self.channelListArrayController setSortDescriptors:@[ sortDescriptor ]];
+	[self.channelListArrayController rearrangeObjects];
 }
 
 #pragma mark -
